@@ -126,3 +126,47 @@ router.delete('/single/:blogTitleToDelete', (req, res) => {
         hasBeenDeleted: true
     });
 }); 
+
+// PUT/UPDATE A NEW BLOG
+router.put('/update-one/:blogTitle', (req,res) => {
+  const blogTitle = req.params.blogTitle;
+
+  const blogIndex = sampleBlogs.findIndex((blog) => {
+      if (blog.title === blogTitle){
+          return true;
+      } else {
+          return false;
+      }
+  });
+
+  const originalBlog = sampleBlogs[blogIndex];
+
+  console.log(originalBlog);
+
+  const updatedBlog = {
+      title: req.body.title,
+      text: req.body.text,
+      author: req.body.author,
+      category: req.body.category,
+      createdAt: new Date(),
+      lastModified: new Date()
+  };
+
+  const updatedBlogCheck = validateBlogData(updatedBlog);
+
+  if (updatedBlogCheck.isValid === false){
+      res.json({
+          success: false,
+          message: updatedBlogCheck.message
+      })
+      return;
+  };
+
+
+  sampleBlogs[blogIndex] = updatedBlog;
+
+  res.json({
+      success: true,
+      blog: updatedBlog
+    });
+})
